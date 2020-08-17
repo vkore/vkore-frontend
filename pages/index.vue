@@ -1,6 +1,10 @@
 <template>
   <v-layout column justify-center align-center>
     <v-row>
+      <group-select ref="groupSelect" />
+      <v-btn @click="loadMembers">Загрузить пользователей</v-btn>
+    </v-row>
+    <v-row>
       <v-col v-for="u of test" :key="u.id" cols="3">
         <v-card>
           <v-card-title>
@@ -18,8 +22,11 @@
 </template>
 
 <script>
+import GroupSelect from '../components/GroupSelect'
 export default {
-  components: {},
+  components: {
+    GroupSelect
+  },
   data() {
     return {
       test: []
@@ -28,15 +35,14 @@ export default {
   mounted() {
     this.$axios.get('http://localhost:8080/pages').then((response) => {
       this.test = response.data
-      console.log(this.test)
     })
   },
   methods: {
     getUrl(id) {
       const url = `https://vk.com/id${id}`
-      console.log(url)
       return url
-    }
+    },
+    loadMembers() {}
   }
 }
 </script>
