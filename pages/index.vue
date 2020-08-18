@@ -2,7 +2,9 @@
   <v-layout column justify-center align-center>
     <v-row>
       <group-select ref="groupSelect" />
-      <v-btn @click="loadMembers">Загрузить пользователей</v-btn>
+      <v-btn :loading="loading" @click="loadMembers"
+        >Загрузить пользователей</v-btn
+      >
     </v-row>
     <v-row>
       <v-col v-for="u of test" :key="u.id" cols="3">
@@ -29,12 +31,14 @@ export default {
   },
   data() {
     return {
-      test: []
+      test: [],
+      loading: false
     }
   },
   mounted() {
     this.$axios.get('http://localhost:8080/pages').then((response) => {
-      this.test = response.data
+      this.test = response.data.filter((d) => d)
+      console.log('DATA', this.test)
     })
   },
   methods: {
@@ -42,7 +46,11 @@ export default {
       const url = `https://vk.com/id${id}`
       return url
     },
-    loadMembers() {}
+    async loadMembers() {
+      this.loading = true
+      await this.$refs.groupSelect.loadMembers()
+      this.loading = false
+    }
   }
 }
 </script>

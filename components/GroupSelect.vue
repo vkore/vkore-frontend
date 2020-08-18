@@ -22,6 +22,26 @@ export default {
       this.groups = response.data
     })
   },
-  methods: {}
+  methods: {
+    async loadMembers() {
+      const groups = this.selected
+        .filter((g) => {
+          return typeof g === 'object' || typeof g === 'string'
+        })
+        .map((g) => {
+          if (typeof g === 'object') {
+            return g.screen_name
+          } else if (typeof g === 'string') {
+            return g
+          }
+        })
+
+      const { data } = await this.$axios.post(
+        'http://localhost:8080/api/load_groups',
+        groups
+      )
+      console.log('DATA', data)
+    }
+  }
 }
 </script>
