@@ -7,6 +7,13 @@
       >
     </v-row>
     <v-row>
+      <v-pagination
+        v-model="page"
+        :length="pagesCount"
+        :total-visible="totalVisible"
+      />
+    </v-row>
+    <v-row>
       <v-col v-for="u of test" :key="u.id" cols="3">
         <v-card>
           <v-card-title>
@@ -20,6 +27,13 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row>
+      <v-pagination
+        v-model="page"
+        :length="pagesCount"
+        :total-visible="totalVisible"
+      />
+    </v-row>
   </v-layout>
 </template>
 
@@ -32,14 +46,24 @@ export default {
   data() {
     return {
       test: [],
-      loading: false
+      loading: false,
+      page: 1,
+      pagesCount: 0,
+      totalVisible: 7,
+      offset: 0,
+      perPage: 20,
+      totalCount: 0
+    }
+  },
+  watch: {
+    page(newVal) {
+      this.offset = this.offset + this.perPage
+      this.offset = this.page * this.perPage
+      this.getPages(this.perPage, this.offset)
     }
   },
   mounted() {
-    this.$axios.get('http://localhost:8080/pages').then((response) => {
-      this.test = response.data.filter((d) => d)
-      console.log('DATA', this.test)
-    })
+    this.getPages(this.perPage, this.offset)
   },
   methods: {
     getUrl(id) {
@@ -50,6 +74,17 @@ export default {
       this.loading = true
       await this.$refs.groupSelect.loadMembers()
       this.loading = false
+    },
+    getPages(perPage, offset) {
+      const params = { perPage, offset }
+      this.$axios
+        .$get('http://localhost:8080/pages', { params })
+        .then((response) => {
+          this.test = response.items.filter((d) => d)
+          this.totalCount = response.totalCount
+          this.pagesCount = Math.ceil(this.totalCount / this.perPage)
+          console.log('RESPONSE', response)
+        })
     }
   }
 }
