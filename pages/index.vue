@@ -5,6 +5,7 @@
       <v-btn :loading="loading" @click="loadMembers"
         >Загрузить пользователей</v-btn
       >
+      <city-select />
     </v-row>
     <v-row>
       <v-pagination
@@ -39,9 +40,11 @@
 
 <script>
 import GroupSelect from '../components/GroupSelect'
+import CitySelect from '../components/CitySelect'
 export default {
   components: {
-    GroupSelect
+    GroupSelect,
+    CitySelect
   },
   data() {
     return {
